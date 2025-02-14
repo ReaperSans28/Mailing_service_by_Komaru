@@ -9,7 +9,8 @@
                         <h4>Вход</h4>
                         {% csrf_token %}
                         {{ form.as_p }}
-                        <button type="submit" class="btn btn-primary">Войти</button>
+                        <button type="submit" class="btn btn-primary mb-4">Войти</button>
+                        <p>Забыли пароль? <a href="/users/password-recovery/"> Давайте его поменяем.</a></p>
                     </div>
                 </div>
             </form>

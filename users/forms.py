@@ -2,14 +2,14 @@ from django import forms
 from django.contrib.auth.forms import UserCreationForm
 from django.forms import BooleanField, ImageField
 
-from .models import CustomUser
+from .models import User
 
 
 class CustomUserCreationForm(UserCreationForm):
     username = forms.CharField(max_length=50, required=True)
 
     class Meta(UserCreationForm.Meta):
-        model = CustomUser
+        model = User
         fields = ("email", "username", "password1", "password2")
 
 
@@ -26,10 +26,10 @@ class StyleFormMixin:
 
 
 class PasswordRecoveryForm(StyleFormMixin, forms.Form):
-    email = forms.EmailField(label="Ваш Email")
+    email = forms.EmailField(label="Введите email, на который будет отправлен новый пароль.")
 
     def clean_email(self):
         email = self.cleaned_data.get("email")
-        if not CustomUser.objects.filter(email=email).exists():
+        if not User.objects.filter(email=email).exists():
             raise forms.ValidationError("Такого email нет в бд")
         return email

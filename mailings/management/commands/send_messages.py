@@ -25,7 +25,7 @@ class Command(BaseCommand):
                         campaign=campaign,
                     )
                     print(
-                        f"Сообщение {campaign.message.topic} успешно отправлено на  {recipient.email}"
+                        f"Сообщение {campaign.message.topic} отправлено на {recipient.email}."
                     )
                 except Exception as e:
                     CampaignAttempt.objects.create(

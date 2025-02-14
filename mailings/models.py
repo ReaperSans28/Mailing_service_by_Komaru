@@ -1,7 +1,7 @@
 from django.db import models
 
 from clients.models import Clients
-from users.models import CustomUser
+from users.models import User
 
 
 class Message(models.Model):
@@ -23,12 +23,6 @@ class Message(models.Model):
 
 
 class Campaign(models.Model):
-    STATUS_CHOICES = [
-        ("created", "Создана"),
-        ("started", "Запущена"),
-        ("completed", "Завершена"),
-    ]
-
     first_sent_time = models.DateTimeField(
         null=True,
         blank=True,
@@ -39,7 +33,7 @@ class Campaign(models.Model):
     )
     status = models.CharField(
         max_length=10,
-        choices=STATUS_CHOICES,
+        choices=[("created", "Создана"), ("started", "Запущена"), ("completed", "Завершена")],
         default="created",
         verbose_name="Статус"
     )
@@ -66,7 +60,7 @@ class Campaign(models.Model):
         default=0
     )
     owner = models.ForeignKey(
-        CustomUser,
+        User,
         on_delete=models.SET_NULL,
         blank=True,
         null=True
@@ -85,17 +79,12 @@ class Campaign(models.Model):
 
 
 class CampaignAttempt(models.Model):
-    STATUS_CHOICES = [
-        ("status_ok", "Успешно"),
-        ("status_nok", "Не успешно"),
-    ]
-
     date_attempt = models.DateTimeField(
         verbose_name="Дата и время попытки"
     )
     status = models.CharField(
         max_length=15,
-        choices=STATUS_CHOICES,
+        choices=[("status_ok", "Успешно"), ("status_nok", "Не успешно"),],
         verbose_name="Статус попытки"
     )
     server_response = models.TextField(

@@ -8,7 +8,7 @@ from django.views.generic.edit import CreateView, FormView
 from config.settings import EMAIL_HOST_USER
 from .forms import CustomUserCreationForm, PasswordRecoveryForm
 from django.core.mail import send_mail
-from .models import CustomUser
+from .models import User
 
 
 class RegisterView(CreateView):
@@ -25,8 +25,8 @@ class RegisterView(CreateView):
         user.token = token
         user.save()
         send_mail(
-            subject="Подтверждение почты",
-            message=f"Здравствуйте, перейдите по ссылке для подтверждения почты: {url} ",
+            subject="Подтверждение почты на KKKmail",
+            message=f"Вот ссылка для подтверждения почты {url} ",
             from_email=EMAIL_HOST_USER,
             recipient_list=[user.email],
         )
@@ -34,25 +34,17 @@ class RegisterView(CreateView):
 
 
 class UsersListView(LoginRequiredMixin, ListView):
-    model = CustomUser
+    model = User
     template_name = "users/users_list.html"
 
     def dispatch(self, request, *args, **kwargs):
-        if not request.user.has_perm("users.view_customuser"):
+        if not request.user.has_perm("users.view_user"):
             return HttpResponseForbidden(
-                "У вас нет прав для просмотра списка пользователей."
+                "Не хватает прав"
             )
         return super().dispatch(request, *args, **kwargs)
 
 
-class EmailConfirmationView(TemplateView):
-    model = CustomUser
-    template_name = "users/email_confirmation.html"
-
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        context["title"] = "Письмо активации отправлено"
-        return context
 
 
 class PasswordRecoveryView(FormView):
@@ -62,7 +54,7 @@ class PasswordRecoveryView(FormView):
 
     def form_valid(self, form):
         email = form.cleaned_data["email"]
-        user = CustomUser.objects.get(email=email)
+        user = User.objects.get(email=email)
         length = 12
         alphabet = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789"
         password = get_random_string(length, alphabet)
@@ -70,7 +62,7 @@ class PasswordRecoveryView(FormView):
         user.save()
         send_mail(
             subject="Восстановление пароля",
-            message=f"Ваш новый пароль: {password}",
+            message=f"Новый пароль: {password}",
             from_email=EMAIL_HOST_USER,
             recipient_list=[user.email],
             fail_silently=False,
